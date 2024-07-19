@@ -5,29 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Page</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{
-            background-color: lemonchiffon;
-        }
-        .left-image {
-            background-image: url('./signup.jpg'); 
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 100vh;
-        }
-        .signup-form {
-            width: 80%;;
-            margin: auto;
-            padding: 30px 40px;
-            background-color: rgba(238, 235, 189, 0.9);
-            border: 1px solid #6b6424;
-            border-radius: 10px;
-        }
-        .signup-form h2 {
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/signup.css">
 </head>
 <body>
 
@@ -38,7 +16,8 @@
             <div class="signup-form">
                 <h2>MyChat</h2>
                 <h3 class="text-center">Signup</h3>
-                <form>
+                <p id="message" class="error"></p>
+                <form id="signup">
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
@@ -55,13 +34,18 @@
                         <label for="confirm-password">Confirm Password</label>
                         <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    <div class="d-flex justify-content-center mb-5">
+                        <a href="/user/login">  Login  </a><br>
+                        <p>Already have an account</p>
+                     </div>
+                    <button id="submit" type="submit" class="btn btn-primary btn-block">Register</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
+<script src="/js/signup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

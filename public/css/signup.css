@@ -1,0 +1,29 @@
+body{
+    background-color: lemonchiffon;
+}
+.left-image {
+    background-image: url('./../images/signup.jpg'); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+}
+.signup-form {
+    width: 80%;;
+    margin: auto;
+    padding: 30px 40px;
+    background-color: rgba(238, 235, 189, 0.9);
+    border: 1px solid #6b6424;
+    border-radius: 10px;
+}
+.signup-form h2 {
+    margin-bottom: 30px;
+}
+.error {
+    color: red;
+    display: none;
+}
+.success {
+    color: green;
+    display: none;
+}
