@@ -19,18 +19,21 @@ form.addEventListener('submit', async(e)=>{
     }
 
     try {
+
              
         const response = await axios.post('http://localhost:3000/user/signup', {
             name: name,
             email: email,
             password: password
         });
+
+    
      
         if (response.status === 201) {
-            console.log('Successfully Registered');
+            alert('Successfully Registered');
             window.location.href = 'http://localhost:3000/user/login';
         } else {
-            messageElement.textContent = 'Signup failed. Please try again.';
+            messageElement.textContent = response.message;
             messageElement.style.display = 'block';
         }
     } catch (err) {

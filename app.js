@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const sequelize = require('./config/database');
 require('dotenv').config({path: 'config.env'});
 const path=require('path');
-
+const cors=require('cors');
 
 const userRoutes=require('./Routes/userRoutes');
 
@@ -13,6 +13,9 @@ const User = require('./models/user');
 const app=express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({
+    origin:'*',
+}))
 
 app.use('/user', userRoutes);
 
