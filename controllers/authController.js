@@ -11,12 +11,6 @@ const signToken = (id) => {
 };
 
 exports.signup = catchAsync(async (req, res) => {
-   const user={
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    confirmPassword: req.body.confirmPassword
-    }
 
     //check if user exist already
     const ifUserExist = await User.findOne({where:{email:req.body.email}});
@@ -26,7 +20,14 @@ exports.signup = catchAsync(async (req, res) => {
             message: "User Already Exist with that mail ID"
         })
     }
-    const newUser = await User.create({user});
+
+    console.log("No existing User")
+    const newUser = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword
+    });
 
    console.log(newUser);
 

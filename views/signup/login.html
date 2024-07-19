@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Page</title>
+    <title>Login Page</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/signup.css">
 </head>
@@ -15,13 +15,9 @@
         <div class="col-md-6 d-flex align-items-center">
             <div class="signup-form">
                 <h2>MyChat</h2>
-                <h3 class="text-center">Signup</h3>
+                <h3 class="text-center">Login</h3>
                 <p id="message" class="error"></p>
                 <form id="login">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
-                    </div>
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
@@ -30,21 +26,17 @@
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
                     </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
-                    </div>
                     <div class="d-flex justify-content-center mb-5">
-                        <a href="http://localhost:3000/user/signup">  Login  </a><br>
-                        <p>Already have an account</p>
+                        <a href="/user/login">  SignUp  </a><br>
+                        <p>New User?</p>
                      </div>
-                    <button id="submit" type="submit" class="btn btn-primary btn-block">Login</button>
+                    <button id="submit" type="submit" class="btn btn-primary btn-block">Register</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<script src="/js/signup.js"></script>
+<script src="/js/login.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

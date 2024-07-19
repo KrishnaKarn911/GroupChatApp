@@ -27,7 +27,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            len: [6, 100] // password length between 6 and 100 characters
+            len: [6, 100] 
         }
     },
     confirmPassword: {
@@ -40,16 +40,7 @@ const User = sequelize.define('User', {
             }
         }
     },
-    isPremium: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
-    totalExpense: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
-    },
-    passwordResetToken: DataTypes.STRING,
-    passwordResetExpires: DataTypes.DATE,
+    
 }, {
     hooks: {
         beforeSave: async (user) => {
@@ -69,14 +60,14 @@ const User = sequelize.define('User', {
     }
 });
 
-//Instance method to create reset token
-User.prototype.createPasswordResetToken = function(){
-    const resetToken = crypto.randomBytes(32).toString('hex');
+// //Instance method to create reset token
+// User.prototype.createPasswordResetToken = function(){
+//     const resetToken = crypto.randomBytes(32).toString('hex');
 
-   this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex');
-   this.passwordResetExpires = Date.now() + 10*60*1000;
+//    this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex');
+//    this.passwordResetExpires = Date.now() + 10*60*1000;
 
-   return resetToken;
-}
+//    return resetToken;
+// }
 
 module.exports = User;

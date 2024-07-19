@@ -36,6 +36,8 @@ form.addEventListener('submit', async(e)=>{
             messageElement.textContent = response.message;
             messageElement.style.display = 'block';
         }
+  
+        
     } catch (err) {
         console.log(err);
         messageElement.textContent = err.response ? err.response.data.message : 'An error occurred. Please try again.';
