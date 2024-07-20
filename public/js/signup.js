@@ -7,7 +7,7 @@ form.addEventListener('submit', async(e)=>{
     const password=document.getElementById('password').value;
     const confirmPassword=document.getElementById('confirm-password').value;
 
-    console.log(password  , confirmPassword);
+   
     const messageElement = document.getElementById('message');
     messageElement.style.display = 'none';
     messageElement.textContent = '';

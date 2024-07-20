@@ -6,9 +6,11 @@ const path=require('path');
 const cors=require('cors');
 
 const userRoutes=require('./Routes/userRoutes');
+const chatsRoutes=require('./Routes/chatRoute');
 
 
 const User = require('./models/user');
+const Message=require('./models/messages');
 
 const app=express();
 app.use(bodyParser.json());
@@ -18,8 +20,12 @@ app.use(cors({
 }))
 
 app.use('/user', userRoutes);
+app.use('/chats',chatsRoutes);
 
-sequelize.sync().then(()=>{
+User.hasMany(Message, { foreignKey: 'userId' });
+Message.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+
+sequelize.sync({ alter: true }).then(()=>{
     console.log('Database Synced')
 }).catch(err=>{
     console.log(err);

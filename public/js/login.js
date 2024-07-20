@@ -13,9 +13,7 @@ form.addEventListener('submit',async(e)=>{
         if(response.status===200){
             alert('Logged In Successfully')
             localStorage.setItem('tokenChatApp', response.data.token);
-        }else{
-            messageElement.textContent = response.message;
-            messageElement.style.display = 'block';
+            window.location.href="http://localhost:3000/chats/chatPage"
         }
     }catch(err){
         console.log(err);

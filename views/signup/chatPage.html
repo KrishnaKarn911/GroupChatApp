@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Page</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/chatPage.css">
+</head>
+<body>
+  <div class="container-fluid d-flex flex-column h-100">
+    <div class="chat-container">
+      <div class="chat-header">
+        <h4>Chat</h4>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <!-- Messages will be appended here -->
+        <div class="message sent">Hello, how are you?</div>
+        <div class="message received">I'm good, thanks! How about you?</div>
+      </div>
+      <div class="chat-footer">
+        <div class="input-group">
+          <input type="text" class="form-control" id="messageInput" placeholder="Type a message...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" id="sendButton">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/chatPage.js"></script>
+</body>
+</html>
