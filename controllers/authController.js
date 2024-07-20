@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const catchAsync = require('../utils/catchAsync');
-// const AppError = require('../utils/appError');
-// const bcrypt = require('bcrypt');
+const AppError = require('../utils/appError');
+const bcrypt = require('bcrypt');
 
 const signToken = (id) => {
     return jwt.sign({ id: id}, process.env.JWT_SECRET, {
@@ -42,31 +42,31 @@ exports.signup = catchAsync(async (req, res) => {
     });
 });
 
-// exports.login = catchAsync(async (req, res, next) => {
-//     const { email, password } = req.body;
+exports.login = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
 
-//     // Check if email and password exist
-//     if (!email || !password) {
-//         return next(new AppError('Please provide email and password', 404));
-//     }
+    // Check if email and password exist
+    if (!email || !password) {
+        return next(new AppError('Please provide email and password', 404));
+    }
 
-//     // Check if user exists and if password is correct
-//     const user = await User.findOne({ where: { email: email } });
+    // Check if user exists and if password is correct
+    const user = await User.findOne({ where: { email: email } });
 
-//     if (!user) {
-//         return next(new AppError('Incorrect email or password', 401));
-//     }
+    if (!user) {
+        return next(new AppError(`User doesn't Exist`, 404));
+    }
 
-//     const correct = await bcrypt.compare(password, user.password);
+    const correct = await bcrypt.compare(password, user.password);
 
-//     if (!correct) {
-//         return next(new AppError('Incorrect email or password', 401));
-//     }
+    if (!correct) {
+        return next(new AppError('Incorrect email or password', 401));
+    }
 
-//     // If everything is ok then send the jwt token to client
-//     const token = signToken(user.id, user.isPremium);
-//     res.status(200).json({
-//         status: "success",
-//         token
-//     });
-// });
+    // If everything is ok then send the jwt token to client
+    const token = signToken(user.id);
+    res.status(200).json({
+        status: "success",
+        token
+    });
+});
