@@ -2,6 +2,7 @@ const form = document.getElementById('signup');
 
 form.addEventListener('submit', async(e)=>{
     e.preventDefault();
+    console.log('In Signup form');
     const name=document.getElementById('name').value;
     const email=document.getElementById('email').value;
     const password=document.getElementById('password').value;
@@ -20,7 +21,7 @@ form.addEventListener('submit', async(e)=>{
 
     try {
 
-             
+            
         const response = await axios.post('http://localhost:3000/user/signup', {
             name: name,
             email: email,

@@ -4,8 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const bcrypt = require('bcrypt');
 
-const signToken = (id) => {
-    return jwt.sign({ id: id}, process.env.JWT_SECRET, {
+const signToken = (id,name) => {
+    return jwt.sign({ id: id, name: name}, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
     });
 };
@@ -31,7 +31,7 @@ exports.signup = catchAsync(async (req, res) => {
 
    console.log(newUser);
 
-    const token = signToken(newUser.id, newUser.isPremium);
+    const token = signToken(newUser.id, newUser.name);
 
     res.status(201).json({
         status: "success",
@@ -64,7 +64,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // If everything is ok then send the jwt token to client
-    const token = signToken(user.id);
+    const token = signToken(user.id, user.name);
     res.status(200).json({
         status: "success",
         token
