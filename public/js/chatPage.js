@@ -3,6 +3,7 @@ const btn=document.getElementById('sendButton');
 
 window.addEventListener('DOMContentLoaded',async()=>{
     await fetchAndDisplayMessages();
+    setInterval(fetchAndDisplayMessages, 1000);
 })
 
 
