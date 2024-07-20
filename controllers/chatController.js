@@ -1,6 +1,7 @@
 const path=require('path');
 const Message=require('./../models/messages');
 const User=require('./../models/user');
+const { Op } = require('sequelize');
 
 exports.showChat = (req,res)=>{
     res.sendFile(path.join(__dirname,'..', 'views','signup', 'chatPage.html'))
@@ -26,6 +27,7 @@ exports.sendMessage=async(req,res)=>{
 }
 
 exports.getMessage = async(req,res)=>{
+    const since = req.query.since || 0;
     try{
         console.log(req.user);
         const user=await User.findOne({where:{id: req.user.id}});
@@ -35,14 +37,19 @@ exports.getMessage = async(req,res)=>{
                 message: "Unauthorised User"
             })
         }
-        const messages = await Message.findAll();
-        console.log(messages);
-        res.status(200).json({
-            status: "success",
-            messages
-        })
+        const messages = await Message.findAll({
+            where: {
+                createdAt: {
+                    [Op.gt]: new Date(Number(since)) // Convert `since` to a Date object
+                }
+            },
+            order: [['createdAt', 'ASC']]
+        });
+
+        res.json({ messages });
     }catch(err){
-        console.log(err);
+        console.error('Error fetching messages:', err);
+        res.status(500).json({ error: 'Internal Server Error' })
     }
 
 }
