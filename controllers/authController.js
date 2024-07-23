@@ -29,7 +29,6 @@ exports.signup = catchAsync(async (req, res) => {
         confirmPassword: req.body.confirmPassword
     });
 
-   console.log(newUser);
 
     const token = signToken(newUser.id, newUser.name);
 
@@ -58,7 +57,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     const correct = await bcrypt.compare(password, user.password);
-
+    console.log(correct);
     if (!correct) {
         return next(new AppError('Incorrect email or password', 401));
     }

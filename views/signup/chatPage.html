@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,33 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/chatPage.css">
 </head>
+
 <body>
-  <div class="container-fluid d-flex flex-column h-100">
-    <div class="chat-container">
-      <div class="chat-header">
-        <h4>Chat</h4>
+  <div class="container-fluid d-flex h-100">
+    <div class="row flex-fill">
+      <div class="col-3 bg-light border-right p-0">
+        <div class="users-list">
+          <h5 class="p-3">Users & Groups</h5>
+          <ul class="list-group list-group-flush" id="usersList">
+            <!-- Users and groups will be appended here -->
+          </ul>
+        </div>
       </div>
-      <div class="chat-body" id="chatBody">
-        <!-- Messages will be appended here -->
-        <div class="message sent" id="messageSent">Hello, how are you?</div>
-        <div class="message received" id="messageReceived">I'm good, thanks! How about you?</div>
-      </div>
-      <div class="chat-footer">
-        <div class="input-group">
-          <input type="text" class="form-control" id="messageInput" placeholder="Type a message...">
-          <div class="input-group-append">
-            <button class="btn btn-primary" id="sendButton">Send</button>
+      <div class="col-9 d-flex flex-column">
+        <div class="chat-container flex-grow-1 d-flex flex-column">
+          <div class="chat-header border-bottom p-3">
+            <h4 id="chatName">Chat</h4>
+          </div>
+          <div class="chat-body flex-grow-1 p-3" id="chatBody">
+            <!-- Messages will be appended here -->
+          </div>
+          <div class="chat-footer border-top p-3">
+            <div class="input-group">
+              <input type="text" class="form-control" id="messageInput" placeholder="Type a message...">
+              <div class="input-group-append">
+                <button class="btn btn-primary" id="sendButton">Send</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -31,6 +43,6 @@
 
   <script src="/js/chatPage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 </body>
+
 </html>

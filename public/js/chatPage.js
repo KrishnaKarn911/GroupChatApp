@@ -1,24 +1,75 @@
-const btn=document.getElementById('sendButton');
-const LOCAL_STORAGE_KEY = 'chatMessages';
-const MAX_LOCAL_MESSAGES = 10;
+const btn = document.getElementById('sendButton');
+const usersList = document.getElementById('usersList');
+const chatBody = document.getElementById('chatBody');
+const messageInput = document.getElementById('messageInput');
 
+let selectedUserId = null;
+let selectedUserName = null;
+let lastDisplayedMessageId = 0;
 
-window.addEventListener('DOMContentLoaded',async()=>{
-    loadMessagesFromLocalStorage();
-    await fetchAndDisplayMessages();
+window.addEventListener('DOMContentLoaded', async () => {
+    await fetchAndDisplayUsers();
+   await fetchAndDisplayMessages();
     setInterval(fetchAndDisplayMessages, 1000);
-})
+});
 
+// Fetch and display users, excluding the logged-in user
+async function fetchAndDisplayUsers() {
+    const token = localStorage.getItem('tokenChatApp');
+    if (!token) {
+        console.error('No token found');
+        return;
+    }
 
-btn.addEventListener('click', async(e) => {
+    try {
+        const response = await axios.get('http://localhost:3000/user/', {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        console.log(response);
+        const users = response.data;
+        populateUsersList(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+}
+
+// Populate the users list
+function populateUsersList(users) {
+    usersList.innerHTML = ''; 
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = user.name;
+        li.dataset.userId = user.id;
+        li.addEventListener('click', () => selectUser(user.id, user.name));
+        usersList.appendChild(li);
+    });
+}
+
+function selectUser(userId, userName) {
+    selectedUserId = userId;
+    const chatName = document.getElementById('chatName');
+    chatName.innerText = userName;
+    selectedUserName = userName;
+
+    chatBody.innerHTML = ''; // Clear chat body
+    lastDisplayedMessageId = 0; // Reset the last displayed message ID
+    fetchAndDisplayMessages(); // Fetch messages for the selected user
+}
+
+// Add message
+btn.addEventListener('click', async (e) => {
     e.preventDefault();
-    const chatBody = document.getElementById('chatBody');
-    const messageInput = document.getElementById('messageInput');
 
-    try{
+    if (selectedUserId === null) {
+        console.error('No user selected');
+        return;
+    }
+
+    try {
         const message = messageInput.value.trim();
         if (!message) {
-            return; // Do nothing if message is empty
+            return;
         }
 
         const token = localStorage.getItem('tokenChatApp');
@@ -26,76 +77,60 @@ btn.addEventListener('click', async(e) => {
             console.error('No token found');
             return;
         }
+
+        console.log(selectedUserId);
 
         const response = await axios.post('http://localhost:3000/chats/message', 
-            { message: message }, 
-            { headers: { "Authorization": token } }
+            { message: message, receiverId: selectedUserId }, 
+            { headers: { "Authorization": `Bearer ${token}` } }
         );
 
-        document.getElementById('messageInput').value='';
+        messageInput.value = '';
         appendMessage(response.data.message);
-        saveMessageToLocalStorage(response.data.message);
-    }  
-    catch (err) {
-            console.error('Error sending message:', err);
-        }
-    });
+    } catch (err) {
+        console.error('Error sending message:', err);
+    }
+});
 
-
-    function loadMessagesFromLocalStorage() {
-        const storedMessages = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-        storedMessages.forEach(message => appendMessage(message));
+// Display messages
+async function fetchAndDisplayMessages() {
+    if (selectedUserId === null) {
+        console.error('No user selected');
+        return;
     }
 
-    async function fetchAndDisplayMessages() {
-        const token = localStorage.getItem('tokenChatApp');
-        if (!token) {
-            console.error('No token found');
-            return;
-        }
+    const token = localStorage.getItem('tokenChatApp');
+    if (!token) {
+        console.error('No token found');
+        return;
+    }
 
-        try {
-            const lastMessageTime = getLastMessageTime();
-            const response = await axios.get(`http://localhost:3000/chats/message?since=${lastMessageTime}`, 
-                { headers: { "Authorization": token } }
-            );
-            console.log(response.data.messages);
-            
+    try {
+        const response = await axios.get(`http://localhost:3000/chats/messages/${selectedUserId}`, 
+            { headers: { "Authorization": `Bearer ${token}` } }
+        );
+        console.log(response);
+        const messages = response.data.userMessages;
+        
 
-            
-            const newMessages = response.data.messages;
-            newMessages.forEach(message => {
+            const newMessages = messages.filter(message => message.id > lastDisplayedMessageId);
+             newMessages.forEach(message => {
             appendMessage(message);
-            saveMessageToLocalStorage(message);
-            });
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        }
+            lastDisplayedMessageId = message.id; // Update the last displayed message ID
+        });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
     }
+}
 
-    function appendMessage(message) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.classList.add(message.isSent ? 'sent' : 'received');
-        messageDiv.textContent = `${message.userName}: ${message.message}`;
-        chatBody.appendChild(messageDiv);
-    }
+function appendMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(message.isSent ? 'sent' : 'received');
+    messageDiv.textContent = `${message.userName}: ${message.message}`;
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+}
 
 
-    function saveMessageToLocalStorage(message) {
-        let storedMessages = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-    
-        // Add the new message and remove old messages if exceeding the limit
-        storedMessages.push(message);
-        if (storedMessages.length > MAX_LOCAL_MESSAGES) {
-            storedMessages.shift();
-        }
-    
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedMessages));
-    }
-    
-    // Get the timestamp of the last message
-    function getLastMessageTime() {
-        const storedMessages = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-        return storedMessages.length > 0 ? storedMessages[storedMessages.length - 1].createdAt : 0;
-    }
+

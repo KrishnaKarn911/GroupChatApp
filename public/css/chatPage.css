@@ -1,45 +1,69 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  .chat-header {
-    padding: 10px;
-    background-color: #e0cb4f;
-    color: white;
-  }
-  .chat-body {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    background-color: #f1f1f1;
-  }
-  .chat-footer {
-    padding: 10px;
-    background-color: #fff;
-    border-top: 1px solid #ccc;
-  }
-  .message {
-    padding: 8px 12px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    max-width: 60%;
-  }
-  .message.sent {
-    background-color: #8f8d17;
-    color: white;
-    align-self: flex-end;
-  }
-  .message.received {
-    background-color: #e2e2e2;
-    align-self: flex-start;
-  }
+
+
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .container-fluid {
+      flex-grow: 1;
+    }
+  
+    .users-list {
+      overflow-y: auto;
+      height: 100%;
+    }
+  
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  
+    .chat-body {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+  
+    .chat-footer {
+      background: #f8f9fa;
+    }
+  
+    .list-group-item {
+      cursor: pointer;
+    }
+  
+    .list-group-item:hover {
+      background-color: #f0f0f0;
+    }
+
+        .chat-body {
+          overflow-y: auto;
+        }
+    
+        /* Message container styles */
+        .message {
+          max-width: 70%;
+          margin-bottom: 10px;
+          padding: 10px;
+          border-radius: 10px;
+          word-wrap: break-word;
+        }
+    
+        /* Sent message (right side) */
+        .sent {
+          background-color: #DCF8C6;
+          align-self: flex-end;
+          margin-left: auto;
+        }
+    
+        /* Received message (left side) */
+        .received {
+          background-color: #FFFFFF;
+          align-self: flex-start;
+          margin-right: auto;
+        }

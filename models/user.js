@@ -40,22 +40,28 @@ const User = sequelize.define('User', {
             }
         }
     },
+    is_online:{
+        type: DataTypes.STRING,
+        defaultValue: '0'
+    }, 
+   
     
 }, {
+    timestamps: true,
     hooks: {
         beforeSave: async (user) => {
-          try {
-            if (user.changed('password')) { 
-              console.log('Before save hook: hashing password');
-              const salt = await bcrypt.genSalt(10);
-              user.password = await bcrypt.hash(user.password, salt);
-              console.log('Password hashed');
-              user.confirmPassword = undefined;
+            try {
+                if (user.changed('password')) { 
+                    console.log('Before save hook: hashing password');
+                    const salt = await bcrypt.genSalt(10);
+                    user.password = await bcrypt.hash(user.password, salt);
+                    console.log('Password hashed');
+                    user.confirmPassword = undefined;
+                }
+            } catch (err) {
+                console.error('Error in beforeSave hook:', err);
+                throw err; 
             }
-          } catch (err) {
-            console.error('Error in beforeSave hook:', err);
-            throw err; 
-          }
         }
     }
 });

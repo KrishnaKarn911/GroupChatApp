@@ -12,7 +12,15 @@ const Message = sequelize.define('Message', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  userId: {
+  sender_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  },
+  receiver_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -24,6 +32,6 @@ const Message = sequelize.define('Message', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-});
+},{timestamps: true});
 
 module.exports = Message;
