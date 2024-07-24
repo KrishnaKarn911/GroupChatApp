@@ -1,8 +1,6 @@
 const sequelize = require('../config/database');
-const { DataTypes, Sequelize } = require('sequelize');
-const validator = require('validator');
+const { DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
 
 const User = sequelize.define('User', {
     id: {
@@ -27,7 +25,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            len: [6, 100] 
+            len: [6, 100]
         }
     },
     confirmPassword: {
@@ -40,40 +38,26 @@ const User = sequelize.define('User', {
             }
         }
     },
-    is_online:{
-        type: DataTypes.STRING,
-        defaultValue: '0'
-    }, 
-   
-    
+    groupId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        
+    }
 }, {
     timestamps: true,
     hooks: {
         beforeSave: async (user) => {
             try {
-                if (user.changed('password')) { 
-                    console.log('Before save hook: hashing password');
+                if (user.changed('password')) {
                     const salt = await bcrypt.genSalt(10);
                     user.password = await bcrypt.hash(user.password, salt);
-                    console.log('Password hashed');
                     user.confirmPassword = undefined;
                 }
             } catch (err) {
-                console.error('Error in beforeSave hook:', err);
-                throw err; 
+                throw err;
             }
         }
     }
 });
-
-// //Instance method to create reset token
-// User.prototype.createPasswordResetToken = function(){
-//     const resetToken = crypto.randomBytes(32).toString('hex');
-
-//    this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex');
-//    this.passwordResetExpires = Date.now() + 10*60*1000;
-
-//    return resetToken;
-// }
 
 module.exports = User;

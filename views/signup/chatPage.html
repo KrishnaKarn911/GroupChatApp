@@ -7,6 +7,7 @@
   <title>Chat Page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/chatPage.css">
+  
 </head>
 
 <body>
@@ -18,6 +19,10 @@
           <ul class="list-group list-group-flush" id="usersList">
             <!-- Users and groups will be appended here -->
           </ul>
+          <ul id="groupList">
+
+          </ul>
+          <button class="btn btn-primary m-3" id="createGroupButton">Create Group</button>
         </div>
       </div>
       <div class="col-9 d-flex flex-column">
@@ -41,8 +46,30 @@
     </div>
   </div>
 
+  <!-- Create Group Popup -->
+  <div class="create-group-popup" id="createGroupPopup">
+    <h5>Create Group</h5>
+    <form id="createGroupForm">
+      <div class="form-group">
+        <label for="groupName">Group Name</label>
+        <input type="text" class="form-control" id="groupName" required>
+      </div>
+      <div class="form-group">
+        <label for="groupMembers">Select Members</label>
+        <div id="groupMembers" class="checkbox-group">
+          <!-- User checkboxes will be dynamically populated here -->
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Group</button>
+      <button type="button" class="btn btn-secondary" id="cancelCreateGroupButton">Cancel</button>
+    </form>
+  </div>
+
   <script src="/js/chatPage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

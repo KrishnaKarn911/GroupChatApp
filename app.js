@@ -7,10 +7,13 @@ const cors=require('cors');
 
 const userRoutes=require('./Routes/userRoutes');
 const chatsRoutes=require('./Routes/chatRoute');
-
+const groupRoute=require('./Routes/groupRoute');
 
 const User = require('./models/user');
 const Message=require('./models/messages');
+const Group = require('./models/group');
+const UserGroup=require('./models/userGroup');
+
 
 const app=express();
 
@@ -21,13 +24,24 @@ app.use(cors({
     origin:'*',
 }))
 
-console.log("App.js - >after user");
+
 app.use('/user', userRoutes);
-console.log("App.js - >after user");
+
 app.use('/chats',chatsRoutes);
 
-User.hasMany(Message, { foreignKey: 'userId' });
-Message.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+app.use('/groups', groupRoute);
+
+User.hasMany(Message, { foreignKey: 'sender_id' });
+Message.belongsTo(User, { foreignKey: 'sender_id' });
+
+User.hasMany(Message, { foreignKey: 'receiver_id' });
+Message.belongsTo(User, { foreignKey: 'receiver_id' });
+
+User.belongsToMany(Group, { through: UserGroup, foreignKey: 'userId' });
+Group.belongsToMany(User, { through: UserGroup, foreignKey: 'groupId' });
+
+Group.hasMany(Message, { foreignKey: "groupId" });
+Message.belongsTo(Group, { foreignKey: "groupId" });
 
 sequelize.sync({alter: true}).then(()=>{
     console.log('Database Synced')

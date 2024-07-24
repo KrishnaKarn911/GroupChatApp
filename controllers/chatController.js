@@ -55,6 +55,7 @@ exports.getOneToOneMessage = async (req, res) => {
 
 exports.postOneToOneMessage = async (req, res) => {
   const { message, receiverId } = req.body;
+  
 
   if (!message || !receiverId) {
     return res.status(400).json({ error: 'Message and receiverId are required' });
@@ -65,7 +66,8 @@ exports.postOneToOneMessage = async (req, res) => {
       message,
       sender_id: req.user.id,
       receiver_id: receiverId,
-      userName: req.user.name, // Sender's name
+      userName: req.user.name,
+      groupId: null // Sender's name
     });
 
     res.json({ message: newMessage });

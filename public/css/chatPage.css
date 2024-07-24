@@ -36,10 +36,50 @@
     .list-group-item {
       cursor: pointer;
     }
+        .list-group{
+          cursor: pointer;
+          height: 40px;
+          margin-top: 20px;
+          background-color: rgb(235, 248, 115);
+          margin-left: 0;
+        
+        }
   
     .list-group-item:hover {
       background-color: #f0f0f0;
     }
+        .list-group:hover {
+          background-color: #f0f0f0;
+        }
+
+              
+                .group-list {  /* Style for the list container */
+                  list-style-type: none;
+                  padding: 0;
+                  margin: 0;
+                }
+        
+                /* Style for list items */
+                .group-list .list-group {
+                  background-color: #f0f0f0;
+                  /* Light gray background */
+                  padding: 10px;
+                  /* Add some padding */
+                  border-radius: 5px;
+                  /* Rounded corners */
+                  margin-bottom: 5px;
+                  /* Space between items */
+                  cursor: pointer;
+                  /* Pointer cursor on hover */
+                  transition: background-color 0.3s;
+                  /* Smooth transition for hover effect */
+                }
+        
+                /* Hover effect */
+                .group-list .list-group:hover {
+                  background-color: #e0e0e0;
+                  /* Slightly darker gray */
+                }
 
         .chat-body {
           overflow-y: auto;
@@ -67,3 +107,21 @@
           align-self: flex-start;
           margin-right: auto;
         }
+
+                .create-group-popup {
+                  display: none;
+                  position: fixed;
+                  bottom: 0;
+                  right: 0;
+                  margin: 20px;
+                  padding: 20px;
+                  background: #fff;
+                  border: 1px solid #ddd;
+                  border-radius: 5px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  z-index: 1000;
+                }
+        
+                .create-group-popup.show {
+                  display: block;
+                }
