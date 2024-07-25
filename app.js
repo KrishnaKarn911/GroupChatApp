@@ -32,7 +32,7 @@ app.use('/chats',chatsRoutes);
 app.use('/groups', groupRoute);
 
 User.hasMany(Message, { foreignKey: 'sender_id' });
-Message.belongsTo(User, { foreignKey: 'sender_id' });
+Message.belongsTo(User, {as: 'sender' ,foreignKey: 'sender_id' });
 
 User.hasMany(Message, { foreignKey: 'receiver_id' });
 Message.belongsTo(User, { foreignKey: 'receiver_id' });

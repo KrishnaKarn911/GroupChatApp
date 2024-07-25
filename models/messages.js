@@ -23,11 +23,12 @@ const Message = sequelize.define('Message', {
   },
   receiver_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: User,
       key: 'id',
     },
+    defaultValue:'0'
   },
   groupId: {
     type: DataTypes.INTEGER,

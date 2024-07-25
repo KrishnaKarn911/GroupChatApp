@@ -5,6 +5,7 @@ const chatBody = document.getElementById('chatBody');
 const messageInput = document.getElementById('messageInput');
 
 let selectedUserId = null;
+let selectedGroup = null;
 let selectedUserName = null;
 let lastDisplayedMessageId = 0;
 
@@ -74,47 +75,59 @@ function selectUser(userId, userName) {
 }
 
 function selectGroup(group){
+    selectedGroup=group
     const chatName=document.getElementById('chatName');
     chatName.innerText=group;
     chatBody.innerHTML= '';
      lastDisplayedMessageId = 0;
+     console.log(group);
     fetchAndDisplayMessagesforGroup(group);
 }
 
-// Add message
+// Add message to group or user
 btn.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    if (selectedUserId === null) {
-        console.error('No user selected');
+    const message = messageInput.value.trim();
+    if (!message) {
+        return;
+    }
+
+    const token = localStorage.getItem('tokenChatApp');
+    if (!token) {
+        console.error('No token found');
         return;
     }
 
     try {
-        const message = messageInput.value.trim();
-        if (!message) {
-            return;
+        if (selectedGroup) {
+            console.log('Sending message to group:', selectedGroup);
+
+            const response = await axios.post(`http://localhost:3000/groups/groupmessages/${selectedGroup}`, 
+                { message: message, groupName: selectedGroup }, 
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            messageInput.value = '';
+            appendMessage(response.data.message);
+        } else if (selectedUserId) {
+            console.log('Sending message to user ID:', selectedUserId);
+
+            const response = await axios.post('http://localhost:3000/chats/message', 
+                { message: message, receiverId: selectedUserId }, 
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            messageInput.value = '';
+            appendMessageOneToOne(response.data.message);
+        } else {
+            console.error('No user or group selected');
         }
-
-        const token = localStorage.getItem('tokenChatApp');
-        if (!token) {
-            console.error('No token found');
-            return;
-        }
-
-        console.log('Sending message to user ID:', selectedUserId);
-
-        const response = await axios.post('http://localhost:3000/chats/message', 
-            { message: message, receiverId: selectedUserId }, 
-            { headers: { "Authorization": `Bearer ${token}` } }
-        );
-
-        messageInput.value = '';
-        appendMessage(response.data.message);
     } catch (err) {
         console.error('Error sending message:', err);
     }
 });
+
 
 // Display messages
 async function fetchAndDisplayMessages() {
@@ -140,6 +153,34 @@ async function fetchAndDisplayMessages() {
         
         const newMessages = messages.filter(message => message.id > lastDisplayedMessageId);
         newMessages.forEach(message => {
+            appendMessageOneToOne(message);
+            lastDisplayedMessageId = message.id; // Update the last displayed message ID
+        });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
+}
+
+async function fetchAndDisplayMessagesforGroup(group){
+    const token = localStorage.getItem('tokenChatApp');
+    if (!token) {
+        console.error('No token found');
+        return;
+    }
+    console.log("888888888", group);
+
+    try {
+        console.log('Fetching messages for user ID:', selectedUserId);
+
+        const response = await axios.get(`http://localhost:3000/groups/groupmessages/${group}`, 
+            { headers: { "Authorization": `Bearer ${token}` } }
+        );
+        console.log('Messages fetched:', response.data);
+        const messages = response.data.data;
+      
+        
+        const newMessages = messages.filter(message => message.id > lastDisplayedMessageId);
+        newMessages.forEach(message => {
             appendMessage(message);
             lastDisplayedMessageId = message.id; // Update the last displayed message ID
         });
@@ -148,37 +189,21 @@ async function fetchAndDisplayMessages() {
     }
 }
 
-// async function fetchAndDisplayMessagesforGroup(group){
-//     const token = localStorage.getItem('tokenChatApp');
-//     if (!token) {
-//         console.error('No token found');
-//         return;
-//     }
-
-//     try {
-//         console.log('Fetching messages for user ID:', selectedUserId);
-
-//         const response = await axios.get(`http://localhost:3000/chats/messages/${group}`, 
-//             { headers: { "Authorization": `Bearer ${token}` } }
-//         );
-//         console.log('Messages fetched:', response.data);
-//         const messages = response.data.userMessages;
-        
-//         const newMessages = messages.filter(message => message.id > lastDisplayedMessageId);
-//         newMessages.forEach(message => {
-//             appendMessage(message);
-//             lastDisplayedMessageId = message.id; // Update the last displayed message ID
-//         });
-//     } catch (error) {
-//         console.error('Error fetching messages:', error);
-//     }
-// }
-
-function appendMessage(message) {
+function appendMessageOneToOne(message) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(message.isSent ? 'sent' : 'received');
     messageDiv.textContent = `${message.userName}: ${message.message}`;
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+}
+
+function appendMessage(message) {
+   
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(message.isSent ? 'sent' : 'received');
+    messageDiv.textContent = `${message.sender.name}: ${message.message}`;
     chatBody.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
 }
@@ -204,7 +229,7 @@ cancelCreateGroupButton.addEventListener('click', () => {
 async function populateGroupMembers() {
     console.log('Fetching users for group creation...');
     try {
-        const response = await axios.get('http://localhost:3000/user', {
+        const response = await axios.get('http://localhost:3000/user/', {
             headers: { "Authorization": `Bearer ${localStorage.getItem('tokenChatApp')}` }
         });
         const users = response.data;
@@ -250,7 +275,7 @@ createGroupForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await axios.post('http://localhost:3000/groups', {
+        const response = await axios.post('http://localhost:3000/groups/groupmessages', {
             name: groupName,
             users: selectedMembers
         }, {
@@ -272,7 +297,7 @@ createGroupForm.addEventListener('submit', async (e) => {
             console.log("Login again...")
         }
         console.log("Response from getAllgroup function: ")
-        const response = await axios.get('http://localhost:3000/groups',
+        const response = await axios.get('http://localhost:3000/groups/groupmessages',
             {
             headers: { "Authorization": `Bearer ${token}` }
         }
