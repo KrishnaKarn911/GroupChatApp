@@ -1,127 +1,157 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
 
+.container-fluid {
+  flex-grow: 1;
+}
 
+.users-list,
+.groups-list {
+  overflow-y: auto;
+  max-height: calc(50vh - 20px);
+  /* Adjust the height as needed */
+  height: 200px;
+  /* Ensures the lists show at least 4 items before scrolling */
+}
 
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-    }
-  
-    .container-fluid {
-      flex-grow: 1;
-    }
-  
-    .users-list {
-      overflow-y: auto;
-      height: 100%;
-    }
-  
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-  
-    .chat-body {
-      flex-grow: 1;
-      overflow-y: auto;
-    }
-  
-    .chat-footer {
-      background: #f8f9fa;
-    }
-  
-    .list-group-item {
-      cursor: pointer;
-    }
-        .list-group{
-          cursor: pointer;
-          height: 40px;
-          margin-top: 20px;
-          background-color: rgb(235, 248, 115);
-          margin-left: 0;
-        
-        }
-  
-    .list-group-item:hover {
-      background-color: #f0f0f0;
-    }
-        .list-group:hover {
-          background-color: #f0f0f0;
-        }
+.users-list {
+  height: 40vh;
+  /* Adjust this value to fit 4 names */
+}
 
-              
-                .group-list {  /* Style for the list container */
-                  list-style-type: none;
-                  padding: 0;
-                  margin: 0;
-                }
-        
-                /* Style for list items */
-                .group-list .list-group {
-                  background-color: #f0f0f0;
-                  /* Light gray background */
-                  padding: 10px;
-                  /* Add some padding */
-                  border-radius: 5px;
-                  /* Rounded corners */
-                  margin-bottom: 5px;
-                  /* Space between items */
-                  cursor: pointer;
-                  /* Pointer cursor on hover */
-                  transition: background-color 0.3s;
-                  /* Smooth transition for hover effect */
-                }
-        
-                /* Hover effect */
-                .group-list .list-group:hover {
-                  background-color: #e0e0e0;
-                  /* Slightly darker gray */
-                }
+.groups-list {
+  height: 40vh;
+  /* Adjust this value to fit 4 groups */
+}
 
-        .chat-body {
-          overflow-y: auto;
-        }
-    
-        /* Message container styles */
-        .message {
-          max-width: 70%;
-          margin-bottom: 10px;
-          padding: 10px;
-          border-radius: 10px;
-          word-wrap: break-word;
-        }
-    
-        /* Sent message (right side) */
-        .sent {
-          background-color: #DCF8C6;
-          align-self: flex-end;
-          margin-left: auto;
-        }
-    
-        /* Received message (left side) */
-        .received {
-          background-color: #FFFFFF;
-          align-self: flex-start;
-          margin-right: auto;
-        }
+.create-group-button {
+  margin-top: auto;
+}
 
-                .create-group-popup {
-                  display: none;
-                  position: fixed;
-                  bottom: 0;
-                  right: 0;
-                  margin: 20px;
-                  padding: 20px;
-                  background: #fff;
-                  border: 1px solid #ddd;
-                  border-radius: 5px;
-                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                  z-index: 1000;
-                }
-        
-                .create-group-popup.show {
-                  display: block;
-                }
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-body {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.chat-footer {
+  background: #f8f9fa;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group {
+  cursor: pointer;
+  height: 100px;
+  margin-top: 20px;
+  background-color: rgb(255, 255, 255);
+  margin-left: 0;
+}
+
+#editGroupBtn{
+   margin-left: 100px;
+   margin-top: 0px;
+   border-radius: 5px;
+}
+
+#userList{
+  height: 200px
+}
+
+#groupList{
+  height: 200px
+}
+
+.list-group-item:hover {
+  background-color: #f0f0f0;
+}
+
+.list-group:hover {
+  background-color: #f0f0f0;
+}
+
+.group-list {
+  /* Style for the list container */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style for list items */
+.group-list .list-group {
+  background-color: #f0f0f0;
+  /* Light gray background */
+  padding: 10px;
+  /* Add some padding */
+  border-radius: 5px;
+  /* Rounded corners */
+  margin-bottom: 5px;
+  /* Space between items */
+  cursor: pointer;
+  /* Pointer cursor on hover */
+  transition: background-color 0.3s;
+  /* Smooth transition for hover effect */
+}
+
+/* Hover effect */
+.group-list .list-group:hover {
+  background-color: #e0e0e0;
+  /* Slightly darker gray */
+}
+
+.chat-body {
+  overflow-y: auto;
+}
+
+/* Message container styles */
+.message {
+  max-width: 70%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+
+/* Sent message (right side) */
+.sent {
+  background-color: #DCF8C6;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+/* Received message (left side) */
+.received {
+  background-color: #FFFFFF;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.create-group-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.create-group-popup.show {
+  display: block;
+}

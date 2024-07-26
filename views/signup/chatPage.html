@@ -7,22 +7,36 @@
   <title>Chat Page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/chatPage.css">
-  
 </head>
 
 <body>
   <div class="container-fluid d-flex h-100">
     <div class="row flex-fill">
       <div class="col-3 bg-light border-right p-0">
-        <div class="users-list">
-          <h5 class="p-3">Users & Groups</h5>
-          <ul class="list-group list-group-flush" id="usersList">
-            <!-- Users and groups will be appended here -->
-          </ul>
-          <ul id="groupList">
-
-          </ul>
-          <button class="btn btn-primary m-3" id="createGroupButton">Create Group</button>
+        <div class="d-flex flex-column h-100">
+          <div class="users-list">
+            <h5 class="p-3">Users</h5>
+            <div class="p-3">
+              <input type="text" class="form-control mb-2" id="userSearchInput" placeholder="Search Users...">
+              <button class="btn btn-secondary" id="userSearchButton">Search</button>
+            </div>
+            <ul class="list-group list-group-flush flex-grow-1" id="usersList" style="overflow-y: auto;">
+              <!-- Users will be appended here -->
+            </ul>
+          </div>
+          <div class="groups-list">
+            <h5 class="p-3">Groups</h5>
+            <div class="p-3">
+              <input type="text" class="form-control mb-2" id="groupSearchInput" placeholder="Search Groups...">
+              <button class="btn btn-secondary" id="groupSearchButton">Search</button>
+            </div>
+            <ul class="list-group list-group-flush flex-grow-1" id="groupList" style="overflow-y: auto;">
+              <!-- Groups will be appended here -->
+            </ul>
+          </div>
+          <div class="create-group-button p-3">
+            <button class="btn btn-primary" id="createGroupButton">Create Group</button>
+          </div>
         </div>
       </div>
       <div class="col-9 d-flex flex-column">
@@ -47,7 +61,7 @@
   </div>
 
   <!-- Create Group Popup -->
-  <div class="create-group-popup" id="createGroupPopup">
+  <div class="create-group-popup" id="createGroupPopup" style="display: none;">
     <h5>Create Group</h5>
     <form id="createGroupForm">
       <div class="form-group">
@@ -63,6 +77,20 @@
       <button type="submit" class="btn btn-primary">Create Group</button>
       <button type="button" class="btn btn-secondary" id="cancelCreateGroupButton">Cancel</button>
     </form>
+  </div>
+
+  <!-- Edit Group Popup -->
+  <div class="edit-group-popup" id="editGroupPopup" style="display: none;">
+    <h5>Edit Group</h5>
+    <div id="editGroupActions">
+      <button class="btn btn-primary" id="addUserButton">Add User</button>
+      <button class="btn btn-danger" id="removeUserButton">Remove User</button>
+      <button class="btn btn-secondary" id="addAdminButton">Add Admin</button>
+    </div>
+    <div id="editGroupMembers" class="checkbox-group" style="display: none;">
+      <!-- User checkboxes will be dynamically populated here -->
+    </div>
+    <button type="button" class="btn btn-secondary" id="cancelEditGroupButton">Cancel</button>
   </div>
 
   <script src="/js/chatPage.js"></script>

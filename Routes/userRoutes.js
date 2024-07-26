@@ -13,6 +13,8 @@ router.get('/login', userController.loginUser);
 router.post('/login', authController.login);
 
 router.get('/',authoMiddleware.userAuthorisation, userController.getUsers );
+router.get('/NotPartOfgroups/:groupName', authoMiddleware.userAuthorisation, userController.getUsersNotPartOfGroup)
+router.get('/groupsUser/:groupName',authoMiddleware.userAuthorisation,userController.getGroupUser)
 
 
 

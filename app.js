@@ -13,6 +13,7 @@ const User = require('./models/user');
 const Message=require('./models/messages');
 const Group = require('./models/group');
 const UserGroup=require('./models/userGroup');
+const GroupAdmin = require('./models/groupAdmin');
 
 
 const app=express();
@@ -39,6 +40,10 @@ Message.belongsTo(User, { foreignKey: 'receiver_id' });
 
 User.belongsToMany(Group, { through: UserGroup, foreignKey: 'userId' });
 Group.belongsToMany(User, { through: UserGroup, foreignKey: 'groupId' });
+
+User.belongsToMany(Group, {through: GroupAdmin, foreignKey: 'adminId'});
+Group.belongsToMany(User, {through: GroupAdmin, foreignKey: 'groupId'})
+
 
 Group.hasMany(Message, { foreignKey: "groupId" });
 Message.belongsTo(Group, { foreignKey: "groupId" });

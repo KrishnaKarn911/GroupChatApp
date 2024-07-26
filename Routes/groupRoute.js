@@ -12,6 +12,10 @@ router.get('/groupmessages', authoMiddleware.userAuthorisation, groupController.
 router.post('/groupmessages/:groupName',authoMiddleware.userAuthorisation, groupController.sendGroupMessage);
 router.get('/groupmessages/:groupName', authoMiddleware.userAuthorisation,groupController.getGroupMessages);
 
+router.post('/add-users/:groupName', authoMiddleware.userAuthorisation, groupController.addUserToGroup);
+router.post('/remove-users/:groupName', authoMiddleware.userAuthorisation, groupController.removeUserFromGroup);
+
+
 
 
 
