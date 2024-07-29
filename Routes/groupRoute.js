@@ -14,6 +14,7 @@ router.get('/groupmessages/:groupName', authoMiddleware.userAuthorisation,groupC
 
 router.post('/add-users/:groupName', authoMiddleware.userAuthorisation, groupController.addUserToGroup);
 router.post('/remove-users/:groupName', authoMiddleware.userAuthorisation, groupController.removeUserFromGroup);
+router.post('/add-admin/:groupName', authoMiddleware.userAuthorisation, groupController.addAdmin);
 
 
 

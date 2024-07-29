@@ -283,3 +283,54 @@ exports.removeUserFromGroup= async(req,res)=>{
     });
   }
 }
+
+
+exports.addAdmin = async(req,res)=>{
+  console.log(req.params.groupName);
+  console.log(req.body);
+
+  if (!req.user) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Unauthorized User',
+    });
+  }
+
+  try {
+    const group = await Group.findOne({ where: { name: req.params.groupName } });
+
+    if (!group) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Group not found',
+      });
+    }
+
+    const groupId= group.id;
+    const userIds = req.body.userIds;
+
+   //Creating an array of promises as we need to make all the userId's which we select
+    const adminGroupPromises = userIds.map(userId => {
+      return GroupAdmin.create( {
+      adminId: userId,
+      groupId: groupId
+    });
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(adminGroupPromises);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Users made admin to group successfully',
+    });
+
+  } catch (error) {
+    console.error('Error adding users to group:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+    });
+  }
+  
+}

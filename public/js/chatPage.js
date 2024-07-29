@@ -1,3 +1,5 @@
+
+
 const btn = document.getElementById('sendButton');
 const usersList = document.getElementById('usersList');
 const groupList = document.getElementById('groupList');
@@ -14,6 +16,39 @@ let selectedUserId = null;
 let selectedGroup = null;
 let selectedUserName = null;
 let lastDisplayedMessageId = 0;
+
+const token=localStorage.getItem('tokenChatApp');
+var userName = parseJwt(token).name;
+
+let socket;
+
+// Function to initialize the socket connection
+function initializeSocket() {
+    if (!socket) {
+        console.log('Initializing socket');
+        socket = io();
+
+        socket.on('connect', () => {
+            console.log("User connected with id: ", socket.id);
+            if (selectedUserId) {
+                socket.emit('join-room', { userId: selectedUserId });
+            }
+            if (selectedGroup) {
+                socket.emit('join-room', { group: selectedGroup });
+            }
+        });
+
+        socket.on('receive-message', ({ message, from }) => {
+
+            console.log("In receive message socket: " ,message, from);
+            if (selectedUserId || selectedGroup) {
+                appendMessage({ message, sender: { id: from, name: from } });
+            }
+        });
+    } else {
+        console.log('Socket already initialized');
+    }
+}
 
 // Event listener for DOMContentLoaded
 window.addEventListener('DOMContentLoaded', async () => {
@@ -162,23 +197,27 @@ function showGroupMembersForRemoval(groupName) {
 }
 
 
-// function showGroupMembersForAdmin(groupName) {
-//     const editGroupActions = document.getElementById('editGroupActions');
-//     const editGroupMembers = document.getElementById('editGroupMembers');
+function showGroupMembersForAdmin(groupName) {
+    const token=localStorage.getItem('tokenChatApp');
+    const editGroupActions = document.getElementById('editGroupActions');
+    const editGroupMembers = document.getElementById('editGroupMembers');
 
-//     editGroupActions.style.display = 'none';
-//     editGroupMembers.style.display = 'block';
+    editGroupActions.style.display = 'none';
+    editGroupMembers.style.display = 'block';
 
-//     // Fetch group members
-//     axios.get(`/api/groups/${groupName}/members`)
-//         .then(response => {
-//             const users = response.data;
-//             populateCheckboxGroup(users, 'addAdmin');
-//         })
-//         .catch(error => {
-//             console.error(error);
-//         });
-// }
+    // Fetch group members
+    axios.get(`/user/groupsUser/${groupName}`,{
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(response => {
+            
+            const users = response.data;
+            populateCheckboxGroup(users, 'addAdmin',groupName);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
 
 
 function populateCheckboxGroup(users, action, groupName) {
@@ -245,7 +284,9 @@ function handleGroupAction(users, action, groupName) {
             });
     } else if (action === 'addAdmin') {
         // Handle adding admin roles to users in the group
-        axios.post('/api/groups/add-admin', { userIds: selectedUserIds })
+        axios.post(`/groups/add-admin/${groupName}`, { userIds: selectedUserIds },{
+            headers: { "Authorization": `Bearer ${token}` }
+        })
             .then(response => {
                 alert('Users promoted to admin successfully');
                 document.getElementById('editGroupPopup').style.display = 'none';
@@ -259,7 +300,9 @@ function handleGroupAction(users, action, groupName) {
 
 
 function selectUser(userId, userName) {
+     
     selectedUserId = userId;
+    initializeSocket();
     const chatName = document.getElementById('chatName');
     chatName.innerText = userName;
     selectedUserName = userName;
@@ -267,10 +310,13 @@ function selectUser(userId, userName) {
     chatBody.innerHTML = ''; // Clear chat body
     lastDisplayedMessageId = 0; // Reset the last displayed message ID
     fetchAndDisplayMessages(); // Fetch messages for the selected user
+    socket.emit('join-room', { userId: userId });
 }
 
 function selectGroup(group){
+     
     selectedGroup=group
+    initializeSocket();
     const chatName=document.getElementById('chatName');
     
     chatName.innerText=group;
@@ -278,6 +324,7 @@ function selectGroup(group){
      lastDisplayedMessageId = 0;
      console.log(group);
     fetchAndDisplayMessagesforGroup(group);
+    socket.emit('join-room', { group: group });
 }
 
 // Add message to group or user
@@ -295,10 +342,21 @@ btn.addEventListener('click', async (e) => {
         return;
     }
 
+    if (!socket) {
+        console.error('Socket not initialized');
+        return;
+    }
+    
     try {
+        var userName = parseJwt(token).name; // Extract username from token
+
         if (selectedGroup) {
             console.log('Sending message to group:', selectedGroup);
 
+            // Send message to server
+            socket.emit('send-message', { message: message, group: selectedGroup, username: userName });;
+
+            // Post the message to the server (for persistence)
             const response = await axios.post(`http://localhost:3000/groups/groupmessages/${selectedGroup}`, 
                 { message: message, groupName: selectedGroup }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
@@ -308,14 +366,20 @@ btn.addEventListener('click', async (e) => {
             appendMessage(response.data.message);
         } else if (selectedUserId) {
             console.log('Sending message to user ID:', selectedUserId);
+            console.log("Sending message from username", userName);
 
+            // Send message to server
+             socket.emit('send-message', { message: message, userId: selectedUserId , username: userName});
+
+            // Post the message to the server (for persistence)
             const response = await axios.post('http://localhost:3000/chats/message', 
                 { message: message, receiverId: selectedUserId }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
 
             messageInput.value = '';
-            appendMessageOneToOne(response.data.message);
+            console.log("response from one to one", response.data.message);
+            appendMessage(response.data.message);
         } else {
             console.error('No user or group selected');
         }
@@ -323,8 +387,6 @@ btn.addEventListener('click', async (e) => {
         console.error('Error sending message:', err);
     }
 });
-
-
 // Display messages
 async function fetchAndDisplayMessages() {
     if (selectedUserId === null) {
@@ -346,10 +408,13 @@ async function fetchAndDisplayMessages() {
         );
         console.log('Messages fetched:', response.data);
         const messages = response.data.userMessages;
+
+        console.log(messages);
         
         const newMessages = messages.filter(message => message.id > lastDisplayedMessageId);
         newMessages.forEach(message => {
-            appendMessageOneToOne(message);
+            console.log("One to one message",message.sender.name);
+            appendMessage(message);
             lastDisplayedMessageId = message.id; // Update the last displayed message ID
         });
     } catch (error) {
@@ -385,14 +450,14 @@ async function fetchAndDisplayMessagesforGroup(group){
     }
 }
 
-function appendMessageOneToOne(message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-    messageDiv.classList.add(message.isSent ? 'sent' : 'received');
-    messageDiv.textContent = `${message.userName}: ${message.message}`;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
-}
+// function appendMessageOneToOne(message) {
+//     const messageDiv = document.createElement('div');
+//     messageDiv.classList.add('message');
+//     messageDiv.classList.add(message.isSent ? 'sent' : 'received');
+//     messageDiv.textContent = `${message.userName}: ${message.message}`;
+//     chatBody.appendChild(messageDiv);
+//     chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+// }
 
 function appendMessage(message) {
    
@@ -552,6 +617,8 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
 }
+
+
 
 
 

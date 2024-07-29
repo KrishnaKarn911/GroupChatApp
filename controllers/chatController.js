@@ -42,7 +42,9 @@ exports.getOneToOneMessage = async (req, res) => {
       receiver_id: msg.receiver_id,
       message: msg.message,
       createdAt: msg.createdAt,
-      userName: msg.sender_id === loggedInUserId ? req.user.name : receiverName, 
+      sender: {
+        name: msg.sender_id === loggedInUserId ? req.user.name : receiverName
+    },
       isSent: msg.sender_id === loggedInUserId
     }));
 
@@ -54,6 +56,7 @@ exports.getOneToOneMessage = async (req, res) => {
 };
 
 exports.postOneToOneMessage = async (req, res) => {
+ 
   const { message, receiverId } = req.body;
   
 
@@ -69,6 +72,14 @@ exports.postOneToOneMessage = async (req, res) => {
       userName: req.user.name,
       groupId: null // Sender's name
     });
+
+    newMessage.dataValues.sender = {
+      name: req.user.dataValues.name,
+    };
+     newMessage.dataValues.isSent = true;
+   
+
+    
 
     res.json({ message: newMessage });
   } catch (err) {
