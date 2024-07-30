@@ -1,4 +1,5 @@
-
+const uploadButton = document.getElementById('uploadButton');
+const fileInput = document.getElementById('fileInput')
 
 const btn = document.getElementById('sendButton');
 const usersList = document.getElementById('usersList');
@@ -387,6 +388,78 @@ btn.addEventListener('click', async (e) => {
         console.error('Error sending message:', err);
     }
 });
+
+
+uploadButton.addEventListener('click', async (e) => {
+  e.preventDefault();
+  uploadFile();
+});
+
+
+async function uploadFile() {
+  const file = fileInput.files[0];
+  if (!file) {
+    console.error('No file selected');
+    return;
+  }
+
+  const token = localStorage.getItem('tokenChatApp');
+  if (!token) {
+    console.error('No token found');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await axios.post('http://localhost:3000/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    console.log(response.data);
+
+    const fileUrl = response.data.fileUrl;
+
+    if (selectedGroup) {
+    socket.emit('send-message', { message: fileUrl, group: selectedGroup, username: userName });
+
+    const response = await axios.post(`http://localhost:3000/groups/groupmessages/${selectedGroup}`, 
+                { message: fileUrl, groupName: selectedGroup }, 
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            messageInput.value = '';
+            appendMessage(response.data.message);
+
+  } else if (selectedUserId) {
+    socket.emit('send-message', { message: fileUrl, userId: selectedUserId, username: userName });
+
+    const response = await axios.post('http://localhost:3000/chats/message', 
+                { message: fileUrl, receiverId: selectedUserId }, 
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            messageInput.value = '';
+            console.log("response from one to one", response.data.message);
+            appendMessage(response.data.message);
+  }
+
+  // Ensure socket and userName are defined before accessing their properties
+  if (socket && socket.id && userName) {
+    appendMessage({ message: fileUrl, sender: { id: socket.id, name: userName }, isSent: true });
+  } else {
+    console.error('Socket or userName is undefined');
+  }
+  } catch (err) {
+    console.error('Error uploading file:', err);
+  }
+}
+
+
 // Display messages
 async function fetchAndDisplayMessages() {
     if (selectedUserId === null) {
@@ -450,23 +523,28 @@ async function fetchAndDisplayMessagesforGroup(group){
     }
 }
 
-// function appendMessageOneToOne(message) {
-//     const messageDiv = document.createElement('div');
-//     messageDiv.classList.add('message');
-//     messageDiv.classList.add(message.isSent ? 'sent' : 'received');
-//     messageDiv.textContent = `${message.userName}: ${message.message}`;
-//     chatBody.appendChild(messageDiv);
-//     chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
-// }
+
 
 function appendMessage(message) {
    
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-    messageDiv.classList.add(message.isSent ? 'sent' : 'received');
+   const messageDiv = document.createElement('div');
+  messageDiv.classList.add('message');
+  messageDiv.classList.add(message.isSent ? 'sent' : 'received');
+
+  // Check if the message is a URL (indicating a file)
+  if (message.message.startsWith('http')) {
+    const link = document.createElement('a');
+    link.href = message.message;
+    link.textContent = 'File';
+    link.target = '_blank';
+    messageDiv.textContent = `${message.sender.name}: `;
+    messageDiv.appendChild(link);
+  } else {
     messageDiv.textContent = `${message.sender.name}: ${message.message}`;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+  }
+
+  chatBody.appendChild(messageDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 
 // Create Group Section

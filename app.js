@@ -6,6 +6,28 @@ const path = require('path');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const { S3Client } = require('@aws-sdk/client-s3');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+
+// Initialize S3 client with AWS SDK v3
+const s3 = new S3Client({
+    region: process.env.REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_ACCESS_KEY_PASSWORD
+    }
+});
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.BUCKET,
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString() + path.extname(file.originalname)); // Use timestamp as filename
+        }
+    })
+});
 
 
 
@@ -30,6 +52,11 @@ app.use(cors({ origin: '*' }));
 app.use('/user', userRoutes);
 app.use('/chats', chatsRoutes);
 app.use('/groups', groupRoute);
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.status(200).json({ fileUrl: req.file.location });
+});
+
 
 User.hasMany(Message, { foreignKey: 'sender_id' });
 Message.belongsTo(User, { as: 'sender', foreignKey: 'sender_id' });
