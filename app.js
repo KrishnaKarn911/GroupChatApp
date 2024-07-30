@@ -9,6 +9,8 @@ const { Server } = require('socket.io');
 const { S3Client } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
+const cron = require('node-cron');
+
 
 // Initialize S3 client with AWS SDK v3
 const s3 = new S3Client({
@@ -77,6 +79,13 @@ sequelize.sync().then(() => {
     console.log('Database Synced');
 }).catch(err => {
     console.log(err);
+});
+
+
+cron.schedule('0 0 * * *', async () => {
+    console.log('Running a task every night at midnight to archive old messages');
+    const archiveOldMessages = require('./scripts/archiveMessages');
+    await archiveOldMessages();
 });
 
 io.on('connection', (socket) => {
