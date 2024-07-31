@@ -22,7 +22,7 @@ form.addEventListener('submit', async(e)=>{
     try {
 
             
-        const response = await axios.post('http://localhost:3000/user/signup', {
+        const response = await axios.post('http://13.201.75.236:3000/user/signup', {
             name: name,
             email: email,
             password: password
@@ -32,7 +32,7 @@ form.addEventListener('submit', async(e)=>{
      
         if (response.status === 201) {
             alert('Successfully Registered');
-            window.location.href = 'http://localhost:3000/user/login';
+            window.location.href = 'http://13.201.75.236:3000/user/login';
         } else {
             messageElement.textContent = response.message;
             messageElement.style.display = 'block';

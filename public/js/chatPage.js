@@ -70,7 +70,7 @@ async function fetchAndDisplayUsers() {
     }
 
     try {
-        const response = await axios.get('http://localhost:3000/user/', {
+        const response = await axios.get('http://13.201.75.236:3000/user/', {
             headers: { "Authorization": `Bearer ${token}` }
         });
         console.log('Users fetched:', response.data);
@@ -358,7 +358,7 @@ btn.addEventListener('click', async (e) => {
             socket.emit('send-message', { message: message, group: selectedGroup, username: userName });;
 
             // Post the message to the server (for persistence)
-            const response = await axios.post(`http://localhost:3000/groups/groupmessages/${selectedGroup}`, 
+            const response = await axios.post(`http://13.201.75.236:3000/groups/groupmessages/${selectedGroup}`, 
                 { message: message, groupName: selectedGroup }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -373,7 +373,7 @@ btn.addEventListener('click', async (e) => {
              socket.emit('send-message', { message: message, userId: selectedUserId , username: userName});
 
             // Post the message to the server (for persistence)
-            const response = await axios.post('http://localhost:3000/chats/message', 
+            const response = await axios.post('http://13.201.75.236:3000/chats/message', 
                 { message: message, receiverId: selectedUserId }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -413,7 +413,7 @@ async function uploadFile() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post('http://localhost:3000/upload', formData, {
+    const response = await axios.post('http://13.201.75.236:3000/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         "Authorization": `Bearer ${token}`
@@ -427,7 +427,7 @@ async function uploadFile() {
     if (selectedGroup) {
     socket.emit('send-message', { message: fileUrl, group: selectedGroup, username: userName });
 
-    const response = await axios.post(`http://localhost:3000/groups/groupmessages/${selectedGroup}`, 
+    const response = await axios.post(`http://13.201.75.236:3000/groups/groupmessages/${selectedGroup}`, 
                 { message: fileUrl, groupName: selectedGroup }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -438,7 +438,7 @@ async function uploadFile() {
   } else if (selectedUserId) {
     socket.emit('send-message', { message: fileUrl, userId: selectedUserId, username: userName });
 
-    const response = await axios.post('http://localhost:3000/chats/message', 
+    const response = await axios.post('http://13.201.75.236:3000/chats/message', 
                 { message: fileUrl, receiverId: selectedUserId }, 
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -476,7 +476,7 @@ async function fetchAndDisplayMessages() {
     try {
         console.log('Fetching messages for user ID:', selectedUserId);
 
-        const response = await axios.get(`http://localhost:3000/chats/messages/${selectedUserId}`, 
+        const response = await axios.get(`http://13.201.75.236:3000/chats/messages/${selectedUserId}`, 
             { headers: { "Authorization": `Bearer ${token}` } }
         );
         console.log('Messages fetched:', response.data);
@@ -506,7 +506,7 @@ async function fetchAndDisplayMessagesforGroup(group){
     try {
         console.log('Fetching messages for user ID:', selectedUserId);
 
-        const response = await axios.get(`http://localhost:3000/groups/groupmessages/${group}`, 
+        const response = await axios.get(`http://13.201.75.236:3000/groups/groupmessages/${group}`, 
             { headers: { "Authorization": `Bearer ${token}` } }
         );
         console.log('Messages fetched:', response.data);
@@ -568,7 +568,7 @@ cancelCreateGroupButton.addEventListener('click', () => {
 async function populateGroupMembers() {
     console.log('Fetching users for group creation...');
     try {
-        const response = await axios.get('http://localhost:3000/user/', {
+        const response = await axios.get('http://13.201.75.236:3000/user/', {
             headers: { "Authorization": `Bearer ${localStorage.getItem('tokenChatApp')}` }
         });
         const users = response.data;
@@ -614,7 +614,7 @@ createGroupForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await axios.post('http://localhost:3000/groups/groupmessages', {
+        const response = await axios.post('http://13.201.75.236:3000/groups/groupmessages', {
             name: groupName,
             users: selectedMembers
         }, {
@@ -624,7 +624,7 @@ createGroupForm.addEventListener('submit', async (e) => {
 
         console.log('Group created successfully:', response.data);
         createGroupPopup.classList.remove('show');
-        window.location.href='http://localhost:3000/chats/chatPage';
+        window.location.href='http://13.201.75.236:3000/chats/chatPage';
     } catch (err) {
         console.error('Error creating group:', err);
     }
@@ -637,7 +637,7 @@ async function getAllGroups(){
             console.log("Login again...")
         }
         console.log("Response from getAllgroup function: ")
-        const response = await axios.get('http://localhost:3000/groups/groupmessages',
+        const response = await axios.get('http://13.201.75.236:3000/groups/groupmessages',
             {
             headers: { "Authorization": `Bearer ${token}` }
         }

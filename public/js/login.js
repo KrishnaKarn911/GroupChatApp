@@ -4,7 +4,7 @@ form.addEventListener('submit',async(e)=>{
     
     try{
        
-        const response = await axios.post('http://localhost:3000/user/login',{
+        const response = await axios.post('http://13.201.75.236:3000/user/login',{
             email: document.getElementById('email').value,
             password: document.getElementById('password').value
         })
@@ -13,7 +13,7 @@ form.addEventListener('submit',async(e)=>{
         if(response.status===200){
             alert('Logged In Successfully')
             localStorage.setItem('tokenChatApp', response.data.token);
-            window.location.href="http://localhost:3000/chats/chatPage"
+            window.location.href="http://13.201.75.236:3000/chats/chatPage"
         }
     }catch(err){
         console.log(err);
