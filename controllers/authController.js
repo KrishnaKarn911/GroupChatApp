@@ -4,11 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const bcrypt = require('bcrypt');
 
-const signToken = (id,name) => {
-    return jwt.sign({ id: id, name: name}, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
-    });
-};
+ 
 
 exports.signup = catchAsync(async (req, res) => {
 
